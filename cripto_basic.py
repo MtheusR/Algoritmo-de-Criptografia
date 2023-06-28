@@ -7,81 +7,53 @@ def limpar_console():
     else:
         _ = os.system('clear')
 
-def load_alphabet_table(filename):
-    alphabet_table = {}
+def check_csv_files():
+    csv_files = ['alphabet_table_characters_8bits.csv', 'alphabet_table_reversed_7bits.csv', 'alphabet_table_inverted_6bits.csv']
+    for csv_file in csv_files:
+        if not os.path.isfile(csv_file):
+            print(f"Arquivo CSV '{csv_file}' não encontrado. Executando 'chave_cpx'...")
+            os.system('python chave_cpx.py')
+            break
 
-    with open(filename, 'r') as file:
-        reader = csv.reader(file)
-        next(reader)  # Pula o cabeçalho da tabela
+def translate_text(text):
+    characters_csv = 'alphabet_table_characters_8bits.csv'
+    reversed_csv = 'alphabet_table_reversed_7bits.csv'
+    inverted_csv = 'alphabet_table_inverted_6bits.csv'
 
-        for row in reader:
-            char = row[0]
-            bin_code = row[1]
-            alphabet_table[char] = bin_code
-
-    return alphabet_table
-
-def convert_text_to_binary(text, alphabet_table):
-    binary_text = ""
+    translation = ""
+    character_count = {}
 
     for char in text:
-        if char in alphabet_table:
-            binary_text += alphabet_table[char] + " "
+        if char not in character_count:
+            character_count[char] = 1
+            bin_code = find_character(char, characters_csv)
+        elif character_count[char] == 1:
+            character_count[char] += 1
+            bin_code = find_character(char, reversed_csv)
         else:
-            binary_text += char + " "
+            character_count[char] += 1
+            bin_code = find_character(char, inverted_csv)
 
-    return binary_text.strip()
+        if bin_code is not None:
+            translation += bin_code + " "
+
+    return translation
+
+def find_character(char, csv_file):
+    with open(csv_file, mode='r') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip header row
+        for row in reader:
+            if row[0] == char:
+                return row[1]
+    return None
 
 limpar_console()
 
-# if __name__ == '__main__':
-#     csv_file = 'alphabet_table.csv'
-#     alphabet_table = load_alphabet_table(csv_file)
-
-#     input_text = input("Digite uma frase: ")
-#     binary_text = convert_text_to_binary(input_text, alphabet_table)
-
-#     binary_text = binary_text.replace(" ", "")
-
-#     print(f"Código binário correspondente: {binary_text}")
-    
-def load_binary_table(filename):
-    binary_table = {}
-
-    with open(filename, 'r') as file:
-        reader = csv.reader(file)
-        next(reader)  # Pula o cabeçalho da tabela
-
-        for row in reader:
-            char = row[0]
-            bin_code = row[1]
-            binary_table[bin_code] = char
-
-    return binary_table
-
-def convert_binary_to_text(binary_text, binary_table):
-    text = ""
-
-    binary_codes = binary_text.split()
-    for binary_code in binary_codes:
-        if binary_code in binary_table:
-            text += binary_table[binary_code]
-        else:
-            text += binary_code
-
-    return text
-
 if __name__ == '__main__':
-    csv_file = 'alphabet_table.csv'
-    alphabet_table = load_alphabet_table(csv_file)
+    check_csv_files()
 
-    input_text = input("Digite uma frase: ")
-    
-    binary_text = convert_text_to_binary(input_text, alphabet_table)
+    input_text = input("Digite o texto a ser traduzido: ")
+    translated_text = translate_text(input_text)
 
-    binary_table = load_binary_table(csv_file)
-    
-    decoded_text = convert_binary_to_text(binary_text, binary_table)
-    
-    print(f"Código binário correspondente: {binary_text}")
-    print(f"Texto decodificado: {decoded_text}")
+    print(f"Texto traduzido: {translated_text}")

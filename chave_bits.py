@@ -1,7 +1,11 @@
 import csv
-import pandas as pd
+import os
 
 def generate_alphabet_table(filename):
+    # Criação da pasta 'key-cripto'
+    folder_name = 'key-cripto'
+    os.makedirs(folder_name, exist_ok=True)
+
     # Geração do primeiro arquivo CSV
     alphabet_data = []
     for i in range(26):
@@ -22,7 +26,7 @@ def generate_alphabet_table(filename):
         bin_punctuation = bin(ord(punctuation))[2:].zfill(8)  # Código binário de 8 bits
         alphabet_data.append([punctuation, bin_punctuation])
 
-    csv_filename1 = filename.replace('.xlsx', '_characters_8bits.csv')
+    csv_filename1 = os.path.join(folder_name, filename.replace('.xlsx', '_characters_8bits.csv'))
     with open(csv_filename1, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Caractere', 'CodigoBinario'])
@@ -37,7 +41,7 @@ def generate_alphabet_table(filename):
         reversed_bin = reversed_bin[:7]  # Mantém apenas os primeiros 7 bits
         reversed_bin_data.append([char, reversed_bin])
 
-    csv_filename2 = filename.replace('.xlsx', '_reversed_7bits.csv')
+    csv_filename2 = os.path.join(folder_name, filename.replace('.xlsx', '_reversed_7bits.csv'))
     with open(csv_filename2, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Caractere', 'CodigoBinario_Invertido'])
@@ -52,7 +56,7 @@ def generate_alphabet_table(filename):
         inverted_bin = inverted_bin[:6]  # Mantém apenas os primeiros 6 bits
         inverted_bin_data.append([char, inverted_bin])
 
-    csv_filename3 = filename.replace('.xlsx', '_inverted_6bits.csv')
+    csv_filename3 = os.path.join(folder_name, filename.replace('.xlsx', '_inverted_6bits.csv'))
     with open(csv_filename3, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Caractere', 'CodigoBinario_Invertido_Trocados'])
