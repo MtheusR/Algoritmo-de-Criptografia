@@ -1,7 +1,3 @@
-#Comdando GPT:
-# Crie uma tabela onde eu possa exportar pro excel: 
-# O alfabeto maiusculo e minusculo usando o codigo binario de trás pra frente da tabela asci 
-
 import csv
 
 def generate_alphabet_table(filename):
