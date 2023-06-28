@@ -22,7 +22,7 @@ def generate_alphabet_table(filename):
         bin_punctuation = bin(ord(punctuation))[2:].zfill(8)  # Código binário de 8 bits
         alphabet_data.append([punctuation, bin_punctuation])
 
-    csv_filename1 = filename.replace('.xlsx', '_characters.csv')
+    csv_filename1 = filename.replace('.xlsx', '_characters_8bits.csv')
     with open(csv_filename1, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Caractere', 'CodigoBinario'])
@@ -34,9 +34,10 @@ def generate_alphabet_table(filename):
         char = row[0]
         bin_code = row[1]
         reversed_bin = bin_code[::-1]  # Código binário invertido
+        reversed_bin = reversed_bin[:7]  # Mantém apenas os primeiros 7 bits
         reversed_bin_data.append([char, reversed_bin])
 
-    csv_filename2 = filename.replace('.xlsx', '_reversed.csv')
+    csv_filename2 = filename.replace('.xlsx', '_reversed_7bits.csv')
     with open(csv_filename2, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Caractere', 'CodigoBinario_Invertido'])
@@ -48,9 +49,10 @@ def generate_alphabet_table(filename):
         char = row[0]
         bin_code = row[1]
         inverted_bin = bin_code.replace('0', 'x').replace('1', '0').replace('x', '1')  # Inverte 0 e 1
+        inverted_bin = inverted_bin[:6]  # Mantém apenas os primeiros 6 bits
         inverted_bin_data.append([char, inverted_bin])
 
-    csv_filename3 = filename.replace('.xlsx', '_inverted.csv')
+    csv_filename3 = filename.replace('.xlsx', '_inverted_6bits.csv')
     with open(csv_filename3, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Caractere', 'CodigoBinario_Invertido_Trocados'])

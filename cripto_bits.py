@@ -8,7 +8,7 @@ def limpar_console():
         _ = os.system('clear')
 
 def check_csv_files():
-    csv_files = ['alphabet_table_characters.csv', 'alphabet_table_reversed.csv', 'alphabet_table_inverted.csv']
+    csv_files = ['alphabet_table_characters_8bits.csv', 'alphabet_table_reversed_7bits.csv', 'alphabet_table_inverted_6bits.csv']
     for csv_file in csv_files:
         if not os.path.isfile(csv_file):
             print(f"Arquivo CSV '{csv_file}' não encontrado. Executando 'chave_cpx'...")
@@ -16,10 +16,9 @@ def check_csv_files():
             break
 
 def translate_text(text):
-    
-    characters_csv = 'alphabet_table_characters.csv'
-    reversed_csv = 'alphabet_table_reversed.csv'
-    inverted_csv = 'alphabet_table_inverted.csv'
+    characters_csv = 'alphabet_table_characters_8bits.csv'
+    reversed_csv = 'alphabet_table_reversed_7bits.csv'
+    inverted_csv = 'alphabet_table_inverted_6bits.csv'
 
     translation = ""
     character_count = {}
@@ -52,13 +51,9 @@ def find_character(char, csv_file):
 limpar_console()
 
 if __name__ == '__main__':
-    
     check_csv_files()
 
-    
     input_text = input("Digite o texto a ser traduzido: ")
     translated_text = translate_text(input_text)
-    
-    #  translated_text = translated_text.replace(" ", "")
-    
+
     print(f"Texto traduzido: {translated_text}")
