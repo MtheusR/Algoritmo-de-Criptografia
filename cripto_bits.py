@@ -57,6 +57,11 @@ def translate_text(text, combinations):
 
     return translation
 
+def load_tabs_csv(csv_file):
+    with open(csv_file, mode='r') as file:
+        reader = csv.DictReader(file)
+        return list(reader)
+
 def find_character(char, csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.reader(file)
@@ -66,16 +71,43 @@ def find_character(char, csv_file):
                 return row[1]
     return None
 
+def traverse_translated_text(translated_text, tabs_csv):
+    result = ""
+    bits_to_skip = 0
+
+    while bits_to_skip < len(translated_text):
+        separator = translated_text[bits_to_skip:bits_to_skip + 4]
+        bits_to_skip += 4
+
+        separator_value = None
+        for row in tabs_csv:
+            if row['Binary'] == separator:
+                separator_value = int(row['Decimal'])
+                break
+
+        if separator_value is not None:
+            binary_code = translated_text[bits_to_skip:bits_to_skip + separator_value]
+            bits_to_skip += separator_value
+            result += binary_code + " "
+
+    return result.strip()
+
+tabs_csv = load_tabs_csv('key-cripto/tabs.csv')
+
+
 limpar_console()
 
 if __name__ == '__main__':
     check_csv_files()
 
-    # Ler as combinações do arquivo CSV
-    translation_table  = load_translation_table('key-cripto/tabs.csv')
+    # Load the translation table
+    translation_table = load_translation_table('key-cripto/tabs.csv')
 
     input_text = input("Digite o texto a ser traduzido: ")
     translated_text = translate_text(input_text, translation_table)
-    # translated_text = translated_text.replace(" ", "")
+    translated_text = translated_text.replace(" ", "")
 
     print(f"Texto traduzido: {translated_text}")
+
+    separated_codes = traverse_translated_text(translated_text, tabs_csv)
+    print(f"Códigos separados: {separated_codes}")
