@@ -71,6 +71,19 @@ def find_character(char, csv_file):
                 return row[1]
     return None
 
+def find_character2(char, csv_file):
+    with open(csv_file, mode='r') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip header row
+        for row in reader:
+            if row[1] == char:
+                return row[0]
+    return None
+
+characters_csv = 'key-cripto/alphabet_table_characters_8bits.csv'
+reversed_csv = 'key-cripto/alphabet_table_reversed_7bits.csv'
+inverted_csv = 'key-cripto/alphabet_table_inverted_9bits.csv'
+
 def traverse_translated_text(translated_text, tabs_csv):
     result = ""
     bits_to_skip = 0
@@ -87,8 +100,20 @@ def traverse_translated_text(translated_text, tabs_csv):
 
         if separator_value is not None:
             binary_code = translated_text[bits_to_skip:bits_to_skip + separator_value]
+            
+            if separator_value == 8:
+                file_csv = characters_csv
+            elif separator_value == 7:
+                file_csv = reversed_csv
+            elif separator_value == 9:
+                file_csv = inverted_csv
+                
+            character = find_character2(binary_code, file_csv)
+            if character is not None:
+                result += character
+ 
             bits_to_skip += separator_value
-            result += binary_code + " "
+            # result += binary_code + " "
 
     return result.strip()
 
