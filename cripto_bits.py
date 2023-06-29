@@ -1,20 +1,27 @@
 import csv
 import os
 import random
+import sys
 
 def limpar_console():
     if os.name == 'nt':
         _ = os.system('cls')
-    else:
-        _ = os.system('clear')
 
-def check_csv_files():
-    csv_files = ['key-cripto/alphabet_table_characters_8bits.csv', 'key-cripto/alphabet_table_reversed_7bits.csv', 'key-cripto/alphabet_table_inverted_9bits.csv']
-    for csv_file in csv_files:
-        if not os.path.isfile(csv_file):
-            print(f"Arquivo CSV '{csv_file}' não encontrado. Executando 'chave_cpx'...")
+
+def check_csv_files():   
+    csv_files = ['key-cripto/key8bits.csv', 'key-cripto/key7bits.csv', 'key-cripto/key9bits.csv']
+    
+    csv_gerador = ['key-cripto/tabs.csv']
+
+    for csv_files in csv_files:
+        if not os.path.isfile(csv_files):
             os.system('python chave_bits.py')
             break
+    
+    for csv_gerador in csv_gerador:
+        if not os.path.isfile(csv_gerador):
+            os.system('python gerador.py')
+        break
 
 def load_translation_table(csv_file):
     translation_table = {}
@@ -29,10 +36,11 @@ def load_translation_table(csv_file):
     return translation_table
 
 
+characters_csv = 'key-cripto/key8bits.csv'
+reversed_csv = 'key-cripto/key7bits.csv'
+inverted_csv = 'key-cripto/key9bits.csv'
+
 def translate_text(text, combinations):
-    characters_csv = 'key-cripto/alphabet_table_characters_8bits.csv'
-    reversed_csv = 'key-cripto/alphabet_table_reversed_7bits.csv'
-    inverted_csv = 'key-cripto/alphabet_table_inverted_9bits.csv'
     
     translation = ""
     character_count = {}
@@ -80,10 +88,6 @@ def find_character2(char, csv_file):
                 return row[0]
     return None
 
-characters_csv = 'key-cripto/alphabet_table_characters_8bits.csv'
-reversed_csv = 'key-cripto/alphabet_table_reversed_7bits.csv'
-inverted_csv = 'key-cripto/alphabet_table_inverted_9bits.csv'
-
 def traverse_translated_text(translated_text, tabs_csv):
     result = ""
     bits_to_skip = 0
@@ -113,26 +117,17 @@ def traverse_translated_text(translated_text, tabs_csv):
                 result += character
  
             bits_to_skip += separator_value
-            # result += binary_code + " "
 
     return result.strip()
 
+input_text = input("Iniciar programa (y/n): ")
+resposta = input_text.lower()  
+
+if resposta == "y":
+    check_csv_files() 
+    tabs_csv = load_tabs_csv('key-cripto/tabs.csv')
+    translation_table = load_translation_table('key-cripto/tabs.csv')       
+else:
+    sys.exit() 
 tabs_csv = load_tabs_csv('key-cripto/tabs.csv')
-
-
-limpar_console()
-
-if __name__ == '__main__':
-    check_csv_files()
-
-    # Load the translation table
-    translation_table = load_translation_table('key-cripto/tabs.csv')
-
-    input_text = input("Digite o texto a ser traduzido: ")
-    translated_text = translate_text(input_text, translation_table)
-    translated_text = translated_text.replace(" ", "")
-
-    print(f"Texto traduzido: {translated_text}")
-
-    separated_codes = traverse_translated_text(translated_text, tabs_csv)
-    print(f"Códigos separados: {separated_codes}")
+translation_table = load_translation_table('key-cripto/tabs.csv')     
