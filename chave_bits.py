@@ -8,9 +8,9 @@ def generate_alphabet_table(filename):
     # Criação da pasta 'key-cripto'
     folder_name = 'key-cripto'
     os.makedirs(folder_name, exist_ok=True)
-
+    funcoes.limpar_console()
     print();
-    funcoes.generate_progress_bar(100, sleep_time=0.02, description="Gerando Tabelas", bar_color='blue')
+    funcoes.generate_progress_bar(100, sleep_time=0.01, description="Gerando Tabelas", bar_color='blue')
     print();
     print('+-------------------------------------------+');
     print('|             ARQUIVOS CRIADOS              |');
