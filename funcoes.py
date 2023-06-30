@@ -29,3 +29,6 @@ def generate_progress_bar(total_iterations, sleep_time=0.01, description="Gerand
             pbar.update(1)
         pbar.colour = 'green'
         pbar.set_postfix_str("Completed")
+
+def color_blue(txt):
+    print("\033[94m" + txt + "\033[0m")

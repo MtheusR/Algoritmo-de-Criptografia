@@ -2,9 +2,12 @@ import csv
 import os
 import random
 import sys
-import funcoes, main
 
-#Verificando se arquivos estão criados
+def limpar_console():
+    if os.name == 'nt':
+        _ = os.system('cls')
+
+
 def check_csv_files():   
     csv_files = ['key-cripto/key8bits.csv', 'key-cripto/key7bits.csv', 'key-cripto/key9bits.csv']
     
@@ -20,7 +23,6 @@ def check_csv_files():
             os.system('python gerador.py')
         break
 
-#Carregar chaves
 def load_translation_table(csv_file):
     translation_table = {}
     with open(csv_file, mode='r') as file:
@@ -38,12 +40,13 @@ characters_csv = 'key-cripto/key8bits.csv'
 reversed_csv = 'key-cripto/key7bits.csv'
 inverted_csv = 'key-cripto/key9bits.csv'
 
-#Criptografar mensagens
 def translate_text(text, combinations):
     translation = ""
     character_count = {}
-
+    unprocessed_chars = []  # Lista para armazenar caracteres não processados
+    erro = 0
     for char in text:
+        
         try:
             if char not in character_count:
                 character_count[char] = 1
@@ -62,31 +65,28 @@ def translate_text(text, combinations):
                 translation += bin_code + " "
         except:
             # Tratamento de exceção em caso de erro durante o processamento de um número
-            print(f"\033[91mErro ao processar o caractere '{char}'.\033[0m")
-            input()
-            funcoes.limpar_console()
-            main.execute()
+            erro = erro + 1
+            unprocessed_chars.append(char)
+
+    if erro > 0: 
+        print(f"\n\u26D4 \033[91mCaracteres não válidos: {' '.join(unprocessed_chars)}\033[0m\033[91m. Apenas os caracteres válidos foram processados.\033[0m")
 
     return translation
 
-
-#Carregar separadores
 def load_tabs_csv(csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.DictReader(file)
         return list(reader)
 
-#Indentificar tamanho e enviar código
 def find_character(char, csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.reader(file)
-        next(reader)
+        next(reader)  # Skip header row
         for row in reader:
             if row[0] == char:
                 return row[1]
     return None
 
-#Indentificar código e enviar tamanho
 def find_character2(char, csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.reader(file)
@@ -96,7 +96,6 @@ def find_character2(char, csv_file):
                 return row[0]
     return None
 
-#Traduzir mensagem
 def traverse_translated_text(translated_text, tabs_csv):
     result = ""
     bits_to_skip = 0
@@ -129,7 +128,7 @@ def traverse_translated_text(translated_text, tabs_csv):
 
     return result.strip()
 
-input_text = input("Iniciar programa (y/n): ")
+input_text = input(chr(8594) + "\033[94mIniciar programa (y/n): \033[0m")
 resposta = input_text.lower()  
 
 if resposta == "y":
@@ -139,4 +138,4 @@ if resposta == "y":
 else:
     sys.exit() 
 tabs_csv = load_tabs_csv('key-cripto/tabs.csv')
-translation_table = load_translation_table('key-cripto/tabs.csv')    
+translation_table = load_translation_table('key-cripto/tabs.csv')     
