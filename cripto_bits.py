@@ -2,12 +2,9 @@ import csv
 import os
 import random
 import sys
+import funcoes, main
 
-def limpar_console():
-    if os.name == 'nt':
-        _ = os.system('cls')
-
-
+#Verificando se arquivos estão criados
 def check_csv_files():   
     csv_files = ['key-cripto/key8bits.csv', 'key-cripto/key7bits.csv', 'key-cripto/key9bits.csv']
     
@@ -23,6 +20,7 @@ def check_csv_files():
             os.system('python gerador.py')
         break
 
+#Carregar chaves
 def load_translation_table(csv_file):
     translation_table = {}
     with open(csv_file, mode='r') as file:
@@ -40,45 +38,55 @@ characters_csv = 'key-cripto/key8bits.csv'
 reversed_csv = 'key-cripto/key7bits.csv'
 inverted_csv = 'key-cripto/key9bits.csv'
 
+#Criptografar mensagens
 def translate_text(text, combinations):
-    
     translation = ""
     character_count = {}
 
     for char in text:
-        if char not in character_count:
-            character_count[char] = 1
-            bin_code = random.choice(translation_table[8])  # Selecionar código binário aleatório correspondente ao número 8
-            bin_code += find_character(char, characters_csv)  # Concatenar o código binário encontrado
-        elif character_count[char] == 1:
-            character_count[char] += 1
-            bin_code = random.choice(translation_table[7])  # Selecionar código binário aleatório correspondente ao número 7
-            bin_code += find_character(char, reversed_csv)  # Concatenar o código binário encontrado
-        else:
-            character_count[char] += 1
-            bin_code = random.choice(translation_table[9])  # Selecionar código binário aleatório correspondente ao número 6
-            bin_code += find_character(char, inverted_csv)  # Concatenar o código binário encontrado
-            del character_count[char]
+        try:
+            if char not in character_count:
+                character_count[char] = 1
+                bin_code = random.choice(translation_table[8])
+                bin_code += find_character(char, characters_csv)
+            elif character_count[char] == 1:
+                character_count[char] += 1
+                bin_code = random.choice(translation_table[7])
+                bin_code += find_character(char, reversed_csv)
+                character_count[char] += 1
+                bin_code = random.choice(translation_table[9])
+                bin_code += find_character(char, inverted_csv)
+                del character_count[char]
 
-        if bin_code is not None:
-            translation += bin_code + " "
+            if bin_code is not None:
+                translation += bin_code + " "
+        except:
+            # Tratamento de exceção em caso de erro durante o processamento de um número
+            print(f"\033[91mErro ao processar o caractere '{char}'.\033[0m")
+            input()
+            funcoes.limpar_console()
+            main.execute()
 
     return translation
 
+
+#Carregar separadores
 def load_tabs_csv(csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.DictReader(file)
         return list(reader)
 
+#Indentificar tamanho e enviar código
 def find_character(char, csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.reader(file)
-        next(reader)  # Skip header row
+        next(reader)
         for row in reader:
             if row[0] == char:
                 return row[1]
     return None
 
+#Indentificar código e enviar tamanho
 def find_character2(char, csv_file):
     with open(csv_file, mode='r') as file:
         reader = csv.reader(file)
@@ -88,6 +96,7 @@ def find_character2(char, csv_file):
                 return row[0]
     return None
 
+#Traduzir mensagem
 def traverse_translated_text(translated_text, tabs_csv):
     result = ""
     bits_to_skip = 0
@@ -130,4 +139,4 @@ if resposta == "y":
 else:
     sys.exit() 
 tabs_csv = load_tabs_csv('key-cripto/tabs.csv')
-translation_table = load_translation_table('key-cripto/tabs.csv')     
+translation_table = load_translation_table('key-cripto/tabs.csv')    
